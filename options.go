@@ -14,11 +14,13 @@ type Options struct {
 	Flags      string
 	Player     string
 	Url        string
+	Executable string
 	Enqueue    bool
 	Fullscreen bool
 	NewWindow  bool
 	Pip        bool
 	NeedsIpc   bool
+
 }
 
 // Utility object to marshal an mpv-compatible JSON command. As defined in the
@@ -32,6 +34,7 @@ func NewOptions() Options {
 	return Options{
 		Flags:      "",
 		Player:     "mpv",
+		Executable: "mpv",
 		Url:        "",
 		Enqueue:    false,
 		Fullscreen: false,
@@ -77,6 +80,7 @@ func (o *Options) Parse(uri string) error {
 		return fmt.Errorf("Unsupported player: %s", o.Player)
 	}
 
+	o.Executable = GetPlayerInfo(o.Player).Executable;
 	o.Enqueue = u.Query().Get("enqueue") == "1"
 	o.Fullscreen = u.Query().Get("fullscreen") == "1"
 	o.NewWindow = u.Query().Get("new_window") == "1"

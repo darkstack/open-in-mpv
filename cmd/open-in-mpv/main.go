@@ -39,7 +39,7 @@ func main() {
 	}
 
 	args := opts.GenerateCommand()
-	player := exec.Command(opts.Player, args...)
+	player := exec.Command(opts.Executable, args...)
 	log.Println(player.String())
 	must(player.Start())
 	// must(player.Wait())
