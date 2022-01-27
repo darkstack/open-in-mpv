@@ -1,11 +1,44 @@
 SRC:=config.go ipc.go options.go
 EXT_SRC:=$(wildcard extension/Chrome/*) extension/Firefox/manifest.json
+ldflags += -s -w 
+out += open-in-mpv
+
+ifeq ($(platform),)
+  ifeq ($(OS),Windows_NT)
+    platform := windows
+  endif
+endif
+
+ifeq ($(platform),)
+  uname := $(shell uname)
+  ifeq ($(uname),)
+    platform := windows
+  else ifneq ($(findstring Windows,$(uname)),)
+    platform := windows
+  else ifneq ($(findstring NT,$(uname)),)
+    platform := windows
+  else ifneq ($(findstring Linux,$(uname)),)
+    platform := linux
+  else ifneq ($(findstring BSD,$(uname)),)
+    platform := bsd
+  else
+    platform := linux
+  endif
+endif
+
+ifeq ($(platform),windows)
+	ldflags += -H=windowsgui
+	out :=$(out).exe
+endif
+
+flags += -ldflags="$(ldflags)" 
+
 
 all: build/open-in-mpv
 
 build/open-in-mpv: $(SRC)
 	@mkdir -p build
-	go build -ldflags="-s -w" -o build/open-in-mpv ./cmd/open-in-mpv
+	go build $(flags) -o build/$(out) ./cmd/open-in-mpv
 
 build/Firefox.zip: $(EXT_SRC)
 	@mkdir -p build
