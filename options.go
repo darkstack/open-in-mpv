@@ -80,7 +80,12 @@ func (o *Options) Parse(uri string) error {
 		return fmt.Errorf("Unsupported player: %s", o.Player)
 	}
 
-	o.Executable = GetPlayerInfo(o.Player).Executable;
+	if len(GetPlayerInfo(o.Player).Executable) > 0  {
+		o.Executable = GetPlayerInfo(o.Player).Executable
+	} else {
+		o.Executable = o.Player
+	}
+
 	o.Enqueue = u.Query().Get("enqueue") == "1"
 	o.Fullscreen = u.Query().Get("full_screen") == "1"
 	o.NewWindow = u.Query().Get("new_window") == "1"
